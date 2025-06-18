@@ -1,3 +1,2 @@
-export const hello = () => {
-    console.log("안녕");
-};
+const a = 1;
+export {};
