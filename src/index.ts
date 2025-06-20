@@ -1,17 +1,54 @@
-type Good = { title: string; price: number; sale: boolean };
+let numA: number = 5;
+let numB: number = 8;
 
-const goodArr: Good[] = [
-  { title: "사과", price: 1000, sale: true },
-  { title: "딸기", price: 5000, sale: false },
-  { title: "메로나", price: 500, sale: true },
-];
+const resultPlus: number = numA + numB;
+const resultMinus: number = numA - numB;
+const resultDevide: number = numA / numB;
+const resultMulti: number = numA * numB;
 
-goodArr[0].title;
+/**
+ * 사칙연산 함수
+ * - 숫자 2개를 입력하시면 결과가 나옵니다.
+ * - 기호는 4가지(+, -, *, /)를 사용하실 수 있습니다.
+ *
+ * 사용예시
+ * ```javascript
+ * const result: number = calc(5, 4, "+");
+ * ```
+ * @param {number} a
+ * @param {number} b
+ * @param {string} sign
+ * @returns {number}
+ */
 
-const goodArrGeneric: Array<Good> = [
-  { title: "사과", price: 1000, sale: true },
-  { title: "딸기", price: 5000, sale: false },
-  { title: "메로나", price: 500, sale: true },
-];
+function calc(a: number, b: number, sign: string): number {
+  let result;
 
-goodArrGeneric[0].title;
+  switch (sign) {
+    case "+":
+      result = a + b;
+      break;
+    case "-":
+      result = a - b;
+      break;
+    case "/":
+      if (a === 0) {
+        console.log("a 는 절대로 0 이면 안됩니다.");
+        result = 0;
+      } else if (b === 0) {
+        console.log("b 는 절대로 0 이면 안됩니다.");
+        result = 0;
+      } else {
+        result = a / b;
+      }
+      result = a / b;
+      break;
+    case "*":
+      result = a * b;
+      break;
+  }
+
+  return result;
+}
+
+const result: number = calc(7, 10, "*");
