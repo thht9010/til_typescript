@@ -1,432 +1,470 @@
-# 함수 (function)
+# Scope (범위)
 
-- 코드가 길면 함수를 만들까?
-- 2번이상 중복되는 기능이라면 함수 만들까?
-- 기능을 공유할 때 함수만들까?
+- 변수가 살아남는 범위
+- 변수를 찾아서 사용할 수 있는 범위
 
-## 1. 기본 함수형태
+## 1. Scope 종류
 
-```js
-function 함수명() {
-  // return 은 생략가능, 그러나 기본으로 return undefined
-}
-함수명(); // 호출한다. Call
-```
+- `전역` 스코프 : 코드에서 어디에서든 접근 및 사용 가능 (`var`, let, const)
+- `지역` 스코프 : `function` 또는 `{}` 안쪽에서만 사용가능
+- `블록` 스코프 : `{}` 블록 안에서만 사용가능(if, for 등에서 let, const)
 
-```ts
-function 함수명(): 리턴타입 {
-  // return 생략가능, 기본으로 리턴타입이 void
-}
-```
+## 2. 전역 스코프 간단예제
 
-- 타입스크립트의 함수 기본모양
-
-```ts
-함수명(); // 오류아님, 호이스팅이 일어났다.
-function 함수명(): void {}
-함수명();
-```
-
-## 2. 표현식 함수형태 (변수에 함수를 담다)
+- 코드 어디서나 사용 할 수 있는 범위
 
 ```js
-변수(); // 오류 : 호이스팅 오류
-const 변수 = function () {};
-변수(); // 정의하고 사용하여야 한다.
+let message = "안녕"; // 전역 스코프
+function sayHello() {
+  console.log(message);
+}
+sayHello();
 ```
 
 ```ts
-// 리턴타입을 적어주면 타입스크립트, 안적어주면 java script (js) 이다.
-const 변수: 리턴타입 = function (): 리턴타입 {};
-const add: number = function (): number {
-  return 5;
+let message: string = "안녕"; // 전역 스코프
+function sayHello(): void {
+  console.log(message);
+}
+const sayHello = (): void => {
+  console.log(message);
 };
-const result: number = add();
+sayHello();
 ```
 
-## 3. 매개변수(Parameter), 즉 재료가 있는 함수형태
+## 3. 지역스코프 (로컬 범위)
 
 ```js
-function add(a, b) {
-  return a + b;
+function SayHello() {
+  let message = "안녕";
+  console.log(message);
 }
-add(5, 4);
+sayHello();
 ```
 
 ```ts
-function add(a: number, b: number): number {
-  return a + b;
+function SayHello(): void {
+  let message: string = "안녕";
+  console.log(message);
 }
-add(5, 4);
-
-const add = function (a: number, b: number): number {
-  return a + b;
+const SayHello = (): void => {
+  let message: string = "안녕";
+  console.log(message);
 };
+sayHello();
 ```
 
-## 4. 매개변수에 `기본값`을 작성해 줄 수 있다.
-
-```ts
-function add(a: number = 0, b: number = 0): number {
-  return a + b;
-}
-add(8);
-```
-
-## 5. 매개변수가 있을 수도 있고, 없을 수도 있다
-
-```ts
-// ?는 있을수도 있고 없을수도 있다.
-function add(a: number = 0, b?: number): number {
-  return a;
-}
-add(8);
-```
-
-## 6. 나머지 매개변수(Rest Parameter)
-
-```ts
-// 함수가 많아지면 함수 뒤에 계속해서 함수 수 만큼 표시해줘야하지만, 얼마나 올지 모르겠을때는 ... 을 사용하면 알아서 해결된다.
-function 함수(...a: number[]): number[] {
-  return a;
-}
-함수(1, 2, 3, 4, 5, 6);
-함수(1, 2, 3);
-함수(1);
-```
-
-## 7. 함수 실행 후 리턴 종류가 객체(`{}`)인 경우
-
-```ts
-function getUser(): { age: number; name: string } {
-  return { age: 25, name: "hong" };
-}
-```
-
-## 8. 익명 함수 (한번 만들고 버린다.)
-
-```ts
-setInterval(function () {}, 1000);
-window.addEventListner("load", function () {});
-```
-
-## 9. 만들자 말자 바로 실행(즉시 실행 함수)
-
-```ts
-(function () {})();
-```
-
-## 10. 콜백함수
-
-- 재료로 기본형 말고 `함수`를 전달함.
+## 4. 전역과 지역 스코프 간단예제
 
 ```js
-function run(재료) {
-  재료();
+let message = "안녕";
+function sayHello() {
+  let message = "Hi~";
+  console.log(message);
 }
-run(function () {
-  console.log("밥먹자");
-});
-run(function () {
-  console.log("달려라");
-});
-run(function () {
-  console.log("그래");
-});
-
-window.addEventListner("load", function () {});
+sayHello(); // Hi~ 출력 : 지역 스코프가 우선입니다.
 ```
 
-### 11. 고차함수(Higher-Order Function)
+```ts
+let message: string = "안녕";
+function sayHello(): void {
+  let message: string = "Hi~";
+  console.log(message);
+}
+sayHello(); // Hi~ 출력 : 지역 스코프가 우선입니다.
+```
 
-- 재료로 함수를 받거나, 리턴값이 함수인것
+## 5. var 의 문제
+
+- 옛날에는 var 를 사용했습니다. 문제가 많습니다.
 
 ```js
-function 함수(a, fn) {
-  return function (b) {
-    return a * b;
+// 블록 스코프 예제
+const age = 20;
+{
+  const age = 30;
+  const subject = "일반";
+}
+console.log(age); // 20 출력
+console.log(subject); // {}안에 있는거는 안뜸, 오류
+```
+
+```ts
+// 블록 스코프 예제
+const age: number = 20;
+{
+  const age: number = 30;
+  const subject: string = "일반";
+}
+console.log(age); // 20 출력
+console.log(subject); // {}안에 있는거는 안뜸, 오류
+```
+
+```js
+// 블록 스코프 예제
+let age = 20;
+{
+  let age = 30;
+  let subject = "일반";
+}
+console.log(age); // 20 출력
+console.log(subject); // {}안에 있는거는 안뜸, 오류
+```
+
+- var는 출력한다
+
+```js
+// 블록 스코프 예제
+var age = 20;
+{
+  var age = 30;
+  var subject = "일반";
+}
+console.log(age); // 30 출력
+console.log(subject); // 일반 출력
+```
+
+```ts
+// 블록 스코프 예제
+var age: number = 20;
+{
+  var age: number = 30;
+  var subject: string = "일반";
+}
+console.log(age); // 30 출력
+console.log(subject); // 일반 출력
+```
+
+- var 는 `{}` 블락 스코프는 없고 function 지역 스코프는 있다.
+
+```js
+var age = 25;
+function showAge() {
+  var age = 30;
+}
+console.log(age); // function 이 있으므로 25 출력
+showAge();
+console.log(age);
+```
+
+## 6. 전체 스코프 정리
+
+- let, const 는 {} 에 따라 스코프가 정리된다.
+
+```js
+let age = 20;
+const job = "학생";
+{
+  let age = 30;
+  let job = "개발자";
+}
+function showPerson() {
+  let age = 35;
+  let job = "요리사";
+}
+if (true) {
+  let age = 40;
+  let job = "사장";
+}
+```
+
+- var 는 funciton 에 따라 스코프가 정리된다.
+
+```js
+var age = 20;
+var job = "학생";
+{
+  var age = 30;
+  var job = "개발자";
+}
+function showPerson() {
+  var age = 35;
+  var job = "요리사";
+}
+if (true) {
+  var age = 40;
+  var job = "사장";
+}
+```
+
+## 7. 간단 문답
+
+```js
+if (true) {
+  let age = 100;
+}
+console.log(age); // Error
+```
+
+```js
+if (true) {
+  var age = 100;
+}
+console.log(age); // 100 출력
+```
+
+# 호이스팅의 이해(변수에서)
+
+- 만들지 않았는데 사용 가능 한 것 (좋지 않다.)
+
+## 1. 호이스팅이 일어나지 않는 경우
+
+```js
+console.log(age); // Error
+let age = 25;
+```
+
+```js
+let age = 25;
+console.log(age); // 25살 출력 , 순서 중요.
+```
+
+```js
+console.log(age); // Error
+const age = 25;
+```
+
+```js
+const age = 25;
+console.log(age); // 25 출력
+```
+
+- let 과 const는 만들고 console.log(); 해야 출력
+
+## 2. 호이스팅이 일어나는 경우
+
+```js
+console.log(age); // undefined
+var age = 25;
+console.log(age); // 25 출력
+```
+
+# 변수의 재정의
+
+## 1. 재정의 불가능한 경우
+
+- 불가능한 경우
+
+```js
+let age = 20;
+let age = 35;
+
+const job = "일반";
+const job = "사람";
+```
+
+- 가능
+
+```js
+let age = 20;
+{
+  let age = 35;
+}
+
+const job = "일반";
+{
+  const job = "사람";
+}
+```
+
+## 2. 막 재정의 하는 경우
+
+```js
+var age = 20;
+var age = 35;
+
+var job = "일반";
+var job = "사람";
+```
+
+```js
+var age = 20;
+{
+  var age = 35;
+}
+
+var job = "일반";
+{
+  var job = "사람";
+}
+```
+
+# 그렇다면 let, const, var 중에 무엇을 우선으로 할까?
+
+## 1. 무조건 const 로 하세요.
+
+```js
+const age = 30;
+```
+
+## 2. 코딩을 하다보니 값이 변경이 되어야 한다면
+
+- 진행중에 필요에 의해서 let 으로 수정한다.
+
+```js
+let age = 30;
+
+age = 35;
+```
+
+# 함수에서의 스코프
+
+- 데이터를 숨기고, 기능도 숨기고
+- 안전한 코드가 구성됨.
+
+```js
+function 외부() {
+  const nickName = "홍길동";
+  // 중첩함수
+  function 내부() {
+    console.log(nickName);
+  }
+  내부();
+}
+
+console.log(nickName); // Error
+내부(); // Error
+
+외부();
+```
+
+```js
+function 외부(): void {
+  const nickName: string = "홍길동";
+  // 중첩함수
+  function 내부(): void {
+    console.log(nickName);
+  }
+  내부();
+}
+
+console.log(nickName); // Error
+내부(); // Error
+
+외부();
+```
+
+## 2. 함수 외부 변수 접근 제한
+
+- 데이터를 숨긴다.(password)
+- 원하는 동작만으로 데이터를 확인시킨다. (내부함수)
+
+```js
+function 외부() {
+  const password = "123";
+  function 내부() {
+    return password;
+  }
+  return 내부;
+}
+
+const 기능 = 외부();
+const result = 기능();
+password; // Error
+```
+
+```ts
+type ReturnType = () => string;
+function 외부(): ReturnType {
+  const password: string = "123";
+  function 내부(): string {
+    return password;
+  }
+  return 내부;
+}
+
+const 기능 = 외부();
+const result = 기능();
+password; // Error
+```
+
+## 3. 클로저 (Closer)
+
+```js
+function showAge() {
+  const age = 20;
+  console.log(age);
+}
+showAge();
+```
+
+- 클로저로 변수값 유지하기
+
+```js
+function showAge() {
+  let age = 20;
+
+  return function () {
+    age = age + 1;
+    return age;
   };
 }
+const a = showAge();
+
+a(); // 21
+a(); // 22
 ```
-
-# ES6에 추가된 최신 `화살표 함수` 문법(필수)
-
-## 1. 화살표 함수가 필요한 이유
-
-- 기존 함수 보다 간략하게 표현됩니다.
-- 메모리 성능이 최적화 됩니다.
-- `this` 가 고정됩니다.
-
-## 2. 다양한 화살표 함수 표현
-
-- 매개 변수가 없는 경우
-
-```js
-function 함수() {}
-const 변수명 = function () {};
-
-// 화살표 함수 표현
-const 변수명 = () => {};
-```
-
-- 매개 변수가 1개인 경우
-
-```js
-function 함수(a) {}
-const 변수명 = function (a) {};
-
-// 화살표 함수 표현
-const 변수명 = (a) => {};
-const 변수명 = (a) => {};
-
-// 둘 다 똑같음, () 해도 되고 안해도 됨.
-```
-
-- 매개 변수가 1개이면서 리턴을 바로 실행 경우 (1줄 실행시)
-
-```js
-function 함수(a) {
-  return a * 2;
-}
-const 변수명 = function (a) {
-  return a * 2;
-};
-
-// 화살표 함수 표현
-const 변수명 = (a) => a * 2;
-// 한줄일때 이렇게 생략해서 표현 가능.
-```
-
-- 매개변수가 2개인 경우
-
-```js
-function 함수명(a, b) {}
-const 함수명 = function (a, b) {};
-// 화살표 함수로 표현
-// 한개 이상일때는 괄호 생략 불가
-const 함수명 = (a, b) => {};
-```
-
-- 매개 변수가 2개이고, 한 줄로 리턴값이 있는 경우
-
-```js
-function 함수명(a, b) {
-  return a + b;
-}
-
-// 화살표 함수로 만들기
-const 변수 = (a, b) => a + b;
-```
-
-- 화살표 예제
-
-```js
-const isLogin = true;
-
-function login() {
-  if (isLogin) {
-    return "로그인";
-  } else {
-    return "로그인 전";
-  }
-}
-
-const login = function () {
-  if (isLogin) {
-    return "로그인";
-  } else {
-    return "로그인 전";
-  }
-};
-
-// 화살표 함수로 표현
-const login = () => {
-  if (isLogin) {
-    return "로그인";
-  } else {
-    return "로그인 전";
-  }
-};
-
-const login = () => (isLogin ? "로그인" : "로그인 전");
-```
-
-- 정말 조심해야 하는 경우는 매개변수가 객체(`{}`)인 경우
-
-```js
-function 함수(obj) {
-  return obj;
-}
-const 변수 = function (obj) {
-  return obj;
-};
-
-// 화살표 함수로 작성
-const 변수 = ({}) => {};
-```
-
-## 3. 화살표 함수 타입스크립트로 표현하기
-
-- 매개 변수가 없는 경우
 
 ```ts
-function 함수():void {}
-type 함수리턴타입 = () => void
-const 변수명1: 함수리턴타입 => void = function ():void {};
-const 변수명2: 함수리턴타입 =>void = () => {};
+type ReturnType = () => number;
+function showAge(): ReturnType {
+  let age = 20;
 
-// 타입으로 정의해보기
-type 함수리턴타입 = () => void
-const 변수명1: 함수리턴타입 => void = function ():void {};
-// 화살표 함수 표현
-const 변수명2: 함수리턴타입 =>void = () => {};
-```
-
-- 매개 변수가 1개인 경우
-
-```ts
-function 함수(a: number): void {}
-type 내가만든타입 = (a: number) => void;
-const 변수명1: 내가만든타입 = function (a: number): void {};
-
-// 화살표 함수 표현
-const 변수명2: 내가만든타입 = (a: number): void => {};
-```
-
-- 매개 변수가 1개이면서 리턴을 바로 실행 경우 (1줄 실행시)
-
-```ts
-function 함수(a: number): number {
-  return a * 2;
+  return function (): number {
+    age = age + 1;
+    return age;
+  };
 }
-type 내가만든타입 = (a: number) => number;
-const 변수명1: 내가만든타입 = function (a: number): void {
-  return a * 2;
-};
+const a: ReturnType = showAge();
 
-// 화살표 함수 표현
-const 변수명2: 내가만든타입 = (a: number): void => {};
+a(); // 21
+a(); // 22
 ```
 
-- 매개변수가 2개인 경우
-
-```ts
-function 함수명(a: string, b: string): void {}
-
-type 내가만든타입 = (a: string, b: string) => void;
-const 변수명1: 내가만든타입 = function (a: string, b: string): void {};
-// 화살표 함수로 표현
-// 한개 이상일때는 괄호 생략 불가
-const 변수명2: 내가만든타입 = (a: string, b: string): void => {};
-```
-
-- 매개 변수가 2개이고, 한 줄로 리턴값이 있는 경우
-
-```ts
-function 함수명(a: string, b: string): string {
-  return a + b;
-}
-type 내가만든타입 = (a: string, b: string) => string;
-const 변수1: 내가만든타입 = function (a: string, b: string): string {
-  return a + b;
-};
-
-// 화살표 함수로 만들기
-const 변수2: 내가만든타입 = (a: string, b: string): string => a + b;
-```
-
-- 화살표 예제
-
-```ts
-const isLogin = true;
-
-function login():string {
-  if (isLogin) {
-    return "로그인";
-  } else {
-    return "로그인 전";
-  }
-}
-
-type 내가만든타입: () => string;
-const login2:내가만든타입 = function (): string {
-  if (isLogin) {
-    return "로그인";
-  } else {
-    return "로그인 전";
-  }
-};
-
-// 화살표 함수로 표현
-const login3:내가만든타입 = (): string => {
-  if (isLogin) {
-    return "로그인";
-  } else {
-    return "로그인 전";
-  }
-};
-
-const login4:내가만든타입 = (): string => (isLogin ? "로그인" : "로그인 전");
-```
-
-- 정말 조심해야 하는 경우는 매개변수가 객체(`{}`)인 경우
-
-```ts
-type 내가만든타입 = { a: string; b: string };
-type 내가만든리턴타입 = { a: string };
-function 함수({ a, b }: 내가만든타입): 내가만든리턴타입 {
-  return { a };
-}
-const 변수1: ({ a, b }: 내가만든타입) => 내가만든타입 = function ({
-  a,
-  b,
-}: 내가만든타입): 내가만든타입 {
-  return { a, b };
-};
-
-// 화살표 함수로 작성
-const 변수2: ({ a, b }: 내가만든타입) => 내가만든타입 = ({
-  a,
-  b,
-}: 내가만든타입): 내가만든타입 => ({ a, b });
-```
-
-- 콜백함수
+- 클로저로 배열의 요소 관리하기
 
 ```js
-function run(재료: () => void) {
-  재료();
+function createList() {
+  let itemArr = [];
+  return {
+    // add(재료) : 재료를 담으면 iteamArr 에 추가한다.
+    add(item) {
+      iteArr.push(item);
+    },
+    // show() : 전체 itemArr 보여주기
+    show() {
+      return itemArr;
+    },
+  };
 }
-run(() => 1 + 1);
+// itemArr; // Error 스코프 위반
 
-run( (): void => console.log("밥먹자"));
-run( (): void => console.log("달려라"));
-run( (): void => console.log("그래"));
-
-window.addEventListner("load", (): void => () {});
+const myList = createList();
+myList.add("사과");
+myList.add("딸기");
+myList.show(); // ["사과", "딸기"]
 ```
 
-- 고차함수 : 함수를 리턴함, 함수를 재료로 전달받음
+- 클로저는 `함수 안쪽의 데이터를 유지`한다. 함수 종료되더라도
 
 ```ts
-// 리턴을 일반 결과 값이 아니고 함수를 생성해서 그 함수를 리턴한다.
-type 내가만든타입 = (b: number) => number;
-function makeMuliti(a: number): 내가만든타입 {
-  return (b: number): number => b * a;
-}
-const result: 내가만든타입 => number = makeMuliti(5);
+type ReturnType = { add: (item: string) => void; show: () => string[] };
+function createList(): ReturnType {
+  let itemArr: string[] = [];
+  return {
+    add(item: string): void {
+      iteArr.push(item);
+    },
 
-result(8);
-
-function 사용자인증(auth: boolean, fn: () => void) {
-  if(auth) {
-    fn();
-  }else {
-    console.log("권한이 없습니다.");
-  }
+    show(): string[] {
+      return itemArr;
+    },
+  };
 }
-// 이용권한이 있습니다. 출력
-사용자인증(true, () => console.log("이용권한이 있습니다."));
-// 이용권한이 없습니다. 출력
-사용자인증(false, () => console.log("이용권한이 있습니다."));
+// itemArr; // Error 스코프 위반
+
+const myList: ReturnType = createList();
+myList.add("사과");
+myList.add("딸기");
+myList.show(); // ["사과", "딸기"]
 ```
